@@ -4,21 +4,23 @@ namespace StrategyPatternChallenge
 {
     public static class ShippingStrategyFactory
     {
+        private static readonly List<IShippingStrategy> strategies =
+        [
+            new UpsStrategy(),
+            new FedexStrategy(),
+            new UspsStrategy(),
+            new DhlStrategy()
+        ];
+
         public static IShippingStrategy Create(string shippingMethod)
         {
-            switch (shippingMethod)
-            {
-                case "UPS":
-                    return new UpsStrategy();
-                case "FEDEX":
-                    return new FedexStrategy();
-                case "USPS":
-                    return new UspsStrategy();
-                case "DHL":
-                    return new DhlStrategy();
-                default:
-                    throw new InvalidOperationException("Unsupported shipping method");
-            }
+            var strategy = strategies
+                .FirstOrDefault(x => x.ShippingMethod == shippingMethod);
+
+            if (strategy == null)
+                throw new ArgumentException($"No strategy found for {shippingMethod}");
+
+            return strategy;
         }
     }
 }
